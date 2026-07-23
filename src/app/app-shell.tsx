@@ -1,11 +1,13 @@
 // cypod-telemetry
 // src/app/app-shell.tsx
+import type { ReactNode } from 'react';
 import { Link, Outlet } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { LanguageSwitcher } from '@/ui/language-switcher';
 import { cn } from '@/ui/cn';
 import { useLogout, useSession } from '@/modules/auth/services/use-session';
+import { useActiveAlerts } from '@/modules/alerts/services/use-alerts';
 import { BrandMark } from './brand-mark';
 
 // note: the chrome around every authenticated route. It renders once and the Outlet swaps beneath
@@ -35,7 +37,7 @@ function TopBar() {
 
                 <nav className="flex items-center gap-1">
                     <NavLink to="/" label={t('nav.fleet')} />
-                    <NavLink to="/alerts" label={t('nav.alerts')} />
+                    <NavLink to="/alerts" label={t('nav.alerts')} badge={<AlertCount />} />
                 </nav>
 
                 {/* note: ms-auto, not ml-auto. The logical property pushes the controls to the
@@ -50,18 +52,37 @@ function TopBar() {
     );
 }
 
-function NavLink({ to, label }: { to: string; label: string }) {
+function NavLink({ to, label, badge }: { to: string; label: string; badge?: ReactNode }) {
     return (
         <Link
             to={to}
             // note: `activeOptions.exact` on the fleet route only. Without it "/" is a prefix of
             // every path and both tabs would light up at once on the device detail page.
             activeOptions={{ exact: to === '/' }}
-            className="text-muted hover:text-ink hover:bg-surface-hover rounded-lg px-3 py-1.5 text-sm font-medium transition-colors"
+            className="text-muted hover:text-ink hover:bg-surface-hover flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors"
             activeProps={{ className: 'bg-surface-raised !text-ink' }}
         >
             {label}
+            {badge}
         </Link>
+    );
+}
+
+// note: lives in the header, so the count is current on every screen rather than only on the alerts
+// page. It shares one query key with the alerts panel, so mounting both does not double the polling
+// and the two can never disagree.
+function AlertCount() {
+    const { data } = useActiveAlerts();
+    const count = data?.length ?? 0;
+
+    if (count === 0) {
+        return null;
+    }
+
+    return (
+        <span className="numeral bg-status-fault-soft text-status-fault rounded-full px-1.5 py-0.5 text-[11px] font-semibold">
+            {count}
+        </span>
     );
 }
 

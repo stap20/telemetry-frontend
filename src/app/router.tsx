@@ -13,6 +13,7 @@ import { LoginPage } from '@/modules/auth/views/login.page';
 import { RegisterPage } from '@/modules/auth/views/register.page';
 import { FleetPage } from '@/modules/devices/views/fleet.page';
 import { DeviceDetailPage } from '@/modules/devices/views/device-detail.page';
+import { AlertsPage } from '@/modules/alerts/views/alerts.page';
 import { AppShell } from './app-shell';
 
 // note: routes are declared in code rather than generated from a file tree. The generator needs a
@@ -81,10 +82,16 @@ const deviceDetailRoute = createRoute({
     },
 });
 
+const alertsRoute = createRoute({
+    getParentRoute: () => protectedRoute,
+    path: '/alerts',
+    component: AlertsPage,
+});
+
 const routeTree = rootRoute.addChildren([
     loginRoute,
     registerRoute,
-    protectedRoute.addChildren([fleetRoute, deviceDetailRoute]),
+    protectedRoute.addChildren([fleetRoute, deviceDetailRoute, alertsRoute]),
 ]);
 
 export const router = createRouter({
