@@ -23,7 +23,7 @@
         "back": "Back",
         "dismiss": "Dismiss",
         "updated": "Updated {{when}}",
-        "showingRange": "{{from}}–{{to}} of {{total}}",
+        "showingRange": "{{range}} of {{total}}",
         "previous": "Previous",
         "next": "Next"
     },

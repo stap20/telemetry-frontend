@@ -23,7 +23,7 @@
         "back": "رجوع",
         "dismiss": "إغلاق",
         "updated": "آخر تحديث {{when}}",
-        "showingRange": "{{from}}–{{to}} من {{total}}",
+        "showingRange": "{{range}} من {{total}}",
         "previous": "السابق",
         "next": "التالي"
     },

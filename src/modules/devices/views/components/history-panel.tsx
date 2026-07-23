@@ -17,6 +17,7 @@ const GRID =
 
 export function HistoryPanel({ deviceId }: { deviceId: string }) {
     const { t } = useTranslation();
+    const format = useFormat();
     const [offset, setOffset] = useState(0);
 
     const query = useDeviceHistory(deviceId, { offset, limit: HISTORY_PAGE_SIZE });
@@ -33,11 +34,13 @@ export function HistoryPanel({ deviceId }: { deviceId: string }) {
                 subtitle={t('deviceDetail.history.subtitle')}
                 actions={
                     total > 0 ? (
-                        <span className="numeral text-faint text-xs">
+                        <span className="text-faint text-xs">
                             {t('common.showingRange', {
-                                from: offset + 1,
-                                to: Math.min(offset + HISTORY_PAGE_SIZE, total),
-                                total,
+                                range: format.range(
+                                    offset + 1,
+                                    Math.min(offset + HISTORY_PAGE_SIZE, total),
+                                ),
+                                total: format.number(total, 0),
                             })}
                         </span>
                     ) : null
@@ -116,7 +119,7 @@ function HistoryRow({ reading }: { reading: TelemetryReading }) {
     return (
         <div className={cn(GRID, 'px-5 py-3')}>
             <div className="col-span-2 min-w-0 md:col-span-1">
-                <span className="numeral text-ink text-sm" title={format.relative(reading.recordedAt)}>
+                <span className="text-ink text-sm" title={format.relative(reading.recordedAt)}>
                     {format.dateTime(reading.recordedAt)}
                 </span>
             </div>

@@ -79,9 +79,13 @@
 }
 
 @layer utilities {
-    /* note: Arabic reverses the reading order but NOT the meaning of a minus sign or an ISO
-       timestamp. `dir=ltr` on those specific spans keeps "-5.2" from rendering as "5.2-" while the
-       surrounding sentence stays right-to-left. */
+    /* note: for BARE NUMBERS ONLY — "-5.2", "30.2621, 31.3878", a page count. Arabic reverses the
+       reading order but not the meaning of a minus sign, so isolating these keeps "-5.2" from
+       rendering as "5.2-" inside a right-to-left sentence.
+       Do NOT apply it to an Intl-formatted date. Intl embeds U+200F marks inside the date it
+       returns (10<RLM>/07<RLM>/2026) precisely so the parts order correctly in a bidi context, and
+       forcing direction:ltr overrides those marks and renders the date year-first. That was a real
+       bug here, caught by comparing the rendered codepoints against Intl's own output. */
     .numeral {
         direction: ltr;
         display: inline-block;

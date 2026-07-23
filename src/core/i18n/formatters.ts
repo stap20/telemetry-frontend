@@ -28,6 +28,19 @@ function cached<T>(key: string, build: () => T): T {
     return created;
 }
 
+// note: wraps text in Unicode LEFT-TO-RIGHT ISOLATE / POP DIRECTIONAL ISOLATE. Needed for a
+// compound value like the range "1–25" sitting inside an Arabic sentence: the dash between two
+// numbers is bidi-neutral, so the algorithm reorders the parts and the range renders visually as
+// "25–1" — technically correct reordering, and unreadable, because the digits themselves stay
+// left-to-right. Isolating makes the range one atomic left-to-right run.
+//
+// Done with characters rather than a CSS class because the value is interpolated into the middle of
+// a translated string and cannot be wrapped in an element without splitting the sentence — which is
+// precisely what a translator must be free to reorder.
+export function isolateLtr(text: string): string {
+    return `⁦${text}⁩`;
+}
+
 export function formatNumber(value: number, language: LanguageCode, fractionDigits = 1): string {
     return cached(`n:${language}:${fractionDigits}`, () =>
         new Intl.NumberFormat(INTL_LOCALE[language], {

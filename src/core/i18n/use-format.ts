@@ -3,7 +3,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_LANGUAGE, isSupportedLanguage, type LanguageCode } from './languages';
-import { formatDateTime, formatNumber, formatRelativeTime, formatTimeOnly } from './formatters';
+import {
+    formatDateTime,
+    formatNumber,
+    formatRelativeTime,
+    formatTimeOnly,
+    isolateLtr,
+} from './formatters';
 
 // note: binds the active language to the formatters once, so components call `format.relative(date)`
 // instead of threading the current locale through every call. Without this the language becomes an
@@ -23,6 +29,8 @@ export function useFormat() {
             dateTime: (value: Date) => formatDateTime(value, language),
             time: (value: Date) => formatTimeOnly(value, language),
             relative: (value: Date) => formatRelativeTime(value, language),
+            range: (from: number, to: number) =>
+                isolateLtr(`${formatNumber(from, language, 0)}–${formatNumber(to, language, 0)}`),
         }),
         [language],
     );

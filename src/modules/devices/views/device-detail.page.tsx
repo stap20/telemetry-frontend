@@ -146,7 +146,7 @@ function LatestStatePanel({ query }: { query: ReturnType<typeof useLatestState> 
                     <div className="col-span-2 sm:col-span-4">
                         <p className="text-faint text-xs">
                             {t('devices.columns.lastReading')} ·{' '}
-                            <span className="numeral">{format.dateTime(latest.recordedAt)}</span>
+                            <span>{format.dateTime(latest.recordedAt)}</span>
                         </p>
                     </div>
                 </CardBody>
