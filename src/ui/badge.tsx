@@ -32,15 +32,18 @@ export function Badge({
     pulse = false,
     children,
     className,
+    title,
 }: {
     tone?: Tone;
     dot?: boolean;
     pulse?: boolean;
     children: ReactNode;
     className?: string;
+    title?: string;
 }) {
     return (
         <span
+            title={title}
             className={cn(
                 'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap',
                 TONES[tone],

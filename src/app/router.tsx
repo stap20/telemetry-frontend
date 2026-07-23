@@ -11,8 +11,9 @@ import {
 import { sessionStore } from '@/modules/auth/services/session.store';
 import { LoginPage } from '@/modules/auth/views/login.page';
 import { RegisterPage } from '@/modules/auth/views/register.page';
+import { FleetPage } from '@/modules/devices/views/fleet.page';
+import { DeviceDetailPage } from '@/modules/devices/views/device-detail.page';
 import { AppShell } from './app-shell';
-import { FleetPage } from './fleet-placeholder';
 
 // note: routes are declared in code rather than generated from a file tree. The generator needs a
 // build step and commits a machine-written route file; with this many routes the tree fits on one
@@ -66,10 +67,24 @@ const fleetRoute = createRoute({
     component: FleetPage,
 });
 
+// note: the route reads its own param and passes it down as a plain prop, rather than the page
+// calling useParams. It keeps the page a function of its inputs — renderable in a test or a
+// different route without a router in scope — and it is fully typed, whereas useParams from inside
+// the component needs the route's id as a string literal and would make this file and the page
+// import each other.
+const deviceDetailRoute = createRoute({
+    getParentRoute: () => protectedRoute,
+    path: '/devices/$deviceId',
+    component: function DeviceDetailRoute() {
+        const { deviceId } = deviceDetailRoute.useParams();
+        return <DeviceDetailPage deviceId={deviceId} />;
+    },
+});
+
 const routeTree = rootRoute.addChildren([
     loginRoute,
     registerRoute,
-    protectedRoute.addChildren([fleetRoute]),
+    protectedRoute.addChildren([fleetRoute, deviceDetailRoute]),
 ]);
 
 export const router = createRouter({
