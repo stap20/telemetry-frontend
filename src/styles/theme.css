@@ -1,0 +1,90 @@
+/* cypod-telemetry */
+@import 'tailwindcss';
+
+/* note: the whole visual language is declared once, here, as design tokens. Components reference
+   `bg-surface` / `text-muted` / `text-status-fault` and never a raw hex, so a palette change is one
+   edit rather than a search across every view. It also keeps "which green means healthy" a single
+   decision instead of one made independently in the list, the detail page and the alerts panel. */
+@theme {
+    /* Surfaces, darkest to lightest. An ops console is read for long stretches in dim rooms and
+       against bright telemetry values, so the base is near-black and contrast is spent on data. */
+    --color-canvas: #080b11;
+    --color-surface: #0f141c;
+    --color-surface-raised: #161d28;
+    --color-surface-hover: #1b2431;
+    --color-line: #222c3a;
+    --color-line-strong: #2f3d4f;
+
+    --color-ink: #e8eef6;
+    --color-muted: #8d9bb0;
+    --color-faint: #5d6b80;
+
+    /* Brand: one accent, used for focus, primary actions and the live indicator. */
+    --color-brand: #22d3ee;
+    --color-brand-strong: #06b6d4;
+    --color-brand-soft: #0b3f4a;
+
+    /* Semantic colours. These map to device status and alert severity, nothing else. */
+    --color-status-ok: #34d399;
+    --color-status-ok-soft: #0d3d31;
+    --color-status-fault: #fb7185;
+    --color-status-fault-soft: #46151f;
+    --color-status-unknown: #94a3b8;
+    --color-status-unknown-soft: #232c38;
+    --color-warn: #fbbf24;
+    --color-warn-soft: #40320c;
+
+    --font-sans:
+        ui-sans-serif, system-ui, 'Segoe UI', Roboto, 'Noto Sans Arabic', 'Segoe UI Arabic', Tahoma,
+        sans-serif;
+    --font-mono: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', monospace;
+
+    --radius-card: 0.875rem;
+}
+
+@layer base {
+    html {
+        background-color: var(--color-canvas);
+        color-scheme: dark;
+    }
+
+    body {
+        @apply bg-canvas text-ink font-sans antialiased;
+        margin: 0;
+        min-height: 100vh;
+    }
+
+    /* note: telemetry values are re-rendered every few seconds by the poller. Proportional digits
+       have different widths, so a battery going 9.8 -> 10.1 would shift everything after it and the
+       table would visibly twitch on each poll. Tabular figures pin every digit to the same advance
+       width, which is what makes a live-updating table feel calm instead of restless. */
+    :where(table, [data-numeric]) {
+        font-variant-numeric: tabular-nums;
+    }
+
+    :focus-visible {
+        @apply outline-brand outline-2 outline-offset-2;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply bg-line-strong rounded-full;
+    }
+    ::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+}
+
+@layer utilities {
+    /* note: Arabic reverses the reading order but NOT the meaning of a minus sign or an ISO
+       timestamp. `dir=ltr` on those specific spans keeps "-5.2" from rendering as "5.2-" while the
+       surrounding sentence stays right-to-left. */
+    .numeral {
+        direction: ltr;
+        display: inline-block;
+        unicode-bidi: isolate;
+    }
+}

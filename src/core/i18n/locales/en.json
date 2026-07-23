@@ -1,0 +1,165 @@
+{
+    "app": {
+        "name": "Cypod Telemetry",
+        "tagline": "Fleet monitoring console"
+    },
+    "nav": {
+        "fleet": "Fleet",
+        "alerts": "Alerts",
+        "signOut": "Sign out",
+        "account": "Account"
+    },
+    "language": {
+        "label": "Language",
+        "change": "Change language"
+    },
+    "common": {
+        "retry": "Try again",
+        "cancel": "Cancel",
+        "loading": "Loading…",
+        "live": "Live",
+        "paused": "Paused",
+        "notAvailable": "—",
+        "back": "Back",
+        "dismiss": "Dismiss",
+        "updated": "Updated {{when}}",
+        "showingRange": "{{from}}–{{to}} of {{total}}",
+        "previous": "Previous",
+        "next": "Next"
+    },
+    "auth": {
+        "signIn": {
+            "title": "Sign in",
+            "subtitle": "Monitor your devices in real time.",
+            "submit": "Sign in",
+            "submitting": "Signing in…",
+            "noAccount": "Don't have an account?",
+            "createOne": "Create one"
+        },
+        "register": {
+            "title": "Create an account",
+            "subtitle": "Register to start monitoring devices.",
+            "submit": "Create account",
+            "submitting": "Creating account…",
+            "haveAccount": "Already have an account?",
+            "signIn": "Sign in"
+        },
+        "fields": {
+            "email": "Email address",
+            "password": "Password",
+            "firstName": "First name",
+            "lastName": "Last name"
+        },
+        "validation": {
+            "emailRequired": "Enter your email address.",
+            "emailInvalid": "Enter a valid email address.",
+            "passwordRequired": "Enter your password.",
+            "passwordTooShort": "Password must be at least {{count}} characters.",
+            "firstNameRequired": "Enter your first name.",
+            "lastNameRequired": "Enter your last name."
+        },
+        "sessionExpired": "Your session has ended. Please sign in again."
+    },
+    "devices": {
+        "title": "Fleet",
+        "subtitle_one": "{{count}} device registered",
+        "subtitle_other": "{{count}} devices registered",
+        "pollingNote": "Latest state refreshes every {{seconds}}s",
+        "search": "Search devices",
+        "searchEmpty": "No device matches “{{term}}”.",
+        "empty": {
+            "title": "No devices yet",
+            "body": "Register your first device to start receiving telemetry.",
+            "action": "Register a device"
+        },
+        "register": {
+            "action": "Register device",
+            "title": "Register a device",
+            "subtitle": "The identifier must match the one the hardware reports.",
+            "id": "Device identifier",
+            "idHint": "For example: sensor-A1B2C3",
+            "name": "Display name",
+            "nameHint": "For example: Warehouse freezer",
+            "submit": "Register",
+            "submitting": "Registering…",
+            "idRequired": "Enter the device identifier.",
+            "nameRequired": "Enter a display name."
+        },
+        "columns": {
+            "device": "Device",
+            "status": "Status",
+            "battery": "Battery",
+            "temperature": "Temperature",
+            "position": "Position",
+            "lastReading": "Last reading"
+        },
+        "neverReported": "Never reported",
+        "neverReportedHint": "Registered, but no telemetry received yet.",
+        "viewDetail": "View device"
+    },
+    "deviceDetail": {
+        "backToFleet": "Back to fleet",
+        "latest": {
+            "title": "Latest state",
+            "recordedAt": "Recorded {{when}}",
+            "cacheHit": "Served from cache",
+            "cacheMiss": "Read from database",
+            "cacheExplainer": "The backend reports whether this response came from Redis or Postgres."
+        },
+        "history": {
+            "title": "Recent history",
+            "subtitle": "Readings this device reported, newest first.",
+            "empty": {
+                "title": "No readings yet",
+                "body": "Telemetry recorded by this device will appear here."
+            }
+        },
+        "notFound": {
+            "title": "Device not found",
+            "body": "This device is not registered to your account."
+        }
+    },
+    "alerts": {
+        "title": "Alerts",
+        "subtitle": "Thresholds currently breached across your fleet.",
+        "count_one": "{{count}} active alert",
+        "count_other": "{{count}} active alerts",
+        "empty": {
+            "title": "Nothing needs attention",
+            "body": "No device is currently breaching a threshold."
+        },
+        "type": {
+            "LOW_BATTERY": "Low battery",
+            "HIGH_TEMPERATURE": "High temperature",
+            "unknown": "Alert"
+        },
+        "reading": "Reading",
+        "threshold": "Threshold",
+        "triggered": "Triggered {{when}}",
+        "openDevice": "Open device"
+    },
+    "status": {
+        "OK": "OK",
+        "FAULT": "Fault",
+        "UNKNOWN": "Unknown",
+        "NEVER_REPORTED": "No data"
+    },
+    "units": {
+        "percent": "{{value}}%",
+        "celsius": "{{value}}°C",
+        "coordinates": "{{lat}}, {{lng}}",
+        "noFix": "No GPS fix"
+    },
+    "errors": {
+        "title": "Something went wrong",
+        "network": "Cannot reach the server. Check that the API is running.",
+        "unauthorized": "Your session has ended. Please sign in again.",
+        "forbidden": "You do not have access to this.",
+        "notFound": "That could not be found.",
+        "conflict": "That already exists.",
+        "validation": "Please check the values you entered.",
+        "rateLimited": "Too many readings for this device. Try again in a moment.",
+        "server": "The server ran into a problem. Please try again.",
+        "unknown": "Something went wrong. Please try again."
+    }
+}
