@@ -8,6 +8,7 @@ import { Button } from '@/ui/button';
 import { Card, CardHeader } from '@/ui/card';
 import { cn } from '@/ui/cn';
 import { EmptyState, ErrorState, SkeletonRows } from '@/ui/states';
+import { TextField } from '@/ui/text-field';
 import { useDeviceHistory } from '../../services/use-device';
 import { HISTORY_PAGE_SIZE, type TelemetryReading } from '../../domain/telemetry-reading';
 import { BatteryValue, PositionValue, StatusBadge, TemperatureValue } from './measurements';
@@ -15,17 +16,63 @@ import { BatteryValue, PositionValue, StatusBadge, TemperatureValue } from './me
 const GRID =
     'grid grid-cols-2 gap-x-4 gap-y-2 md:grid-cols-[minmax(0,12rem)_7rem_8rem_7rem_minmax(0,1fr)] md:gap-y-0 md:items-center';
 
+// note: what the two inputs hold, which is NOT what the endpoint takes. `datetime-local` produces a
+// wall-clock string with no zone ("2026-06-01T12:00"), so it is kept verbatim as the field value and
+// converted to an instant only at the edge — see toInstant.
+interface DraftRange {
+    from: string;
+    to: string;
+}
+
+const EMPTY_RANGE: DraftRange = { from: '', to: '' };
+
+// note: the input's value is the user's LOCAL wall clock, so it is handed to the Date constructor
+// unqualified and allowed to be interpreted in the browser's zone before being serialised as UTC.
+// Appending a 'Z' instead would be the tempting one-liner and would silently shift the window by the
+// user's offset — "since 9am" would mean 9am UTC to someone in Cairo.
+function toInstant(value: string): string | undefined {
+    if (!value) {
+        return undefined;
+    }
+
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+}
+
 export function HistoryPanel({ deviceId }: { deviceId: string }) {
     const { t } = useTranslation();
     const format = useFormat();
     const [offset, setOffset] = useState(0);
+    const [range, setRange] = useState<DraftRange>(EMPTY_RANGE);
 
-    const query = useDeviceHistory(deviceId, { offset, limit: HISTORY_PAGE_SIZE });
+    const isFiltered = range.from !== '' || range.to !== '';
+    // note: compared as strings on purpose. `YYYY-MM-DDTHH:mm` sorts lexicographically in the same
+    // order it sorts chronologically, so this needs no parsing and no zone — and both bounds are in
+    // the same zone by construction, which is the only thing that could make it wrong.
+    const isInverted = range.from !== '' && range.to !== '' && range.from > range.to;
+
+    const query = useDeviceHistory(
+        deviceId,
+        {
+            offset,
+            limit: HISTORY_PAGE_SIZE,
+            from: toInstant(range.from),
+            to: toInstant(range.to),
+        },
+        { enabled: !isInverted },
+    );
     const page = query.data;
 
     const total = page?.total ?? 0;
     const hasPrevious = offset > 0;
     const hasNext = offset + HISTORY_PAGE_SIZE < total;
+
+    // note: any change to the window resets to the first page. Staying on page 4 of a result set
+    // that just shrank to one page is how a filter appears to return nothing at all.
+    const editRange = (patch: Partial<DraftRange>) => {
+        setRange((current) => ({ ...current, ...patch }));
+        setOffset(0);
+    };
 
     return (
         <Card className="mt-5">
@@ -47,14 +94,70 @@ export function HistoryPanel({ deviceId }: { deviceId: string }) {
                 }
             />
 
-            {query.isPending ? (
+            <div className="border-line flex flex-wrap items-end gap-3 border-b px-5 py-3">
+                <TextField
+                    label={t('deviceDetail.history.filter.from')}
+                    type="datetime-local"
+                    value={range.from}
+                    // note: `max`/`min` mirror the other bound so the native picker steers away from
+                    // an inverted range in the first place. It is a nudge, not the guard — a typed
+                    // value bypasses it entirely, which is why isInverted is still checked below.
+                    max={range.to || undefined}
+                    onChange={(event) => editRange({ from: event.target.value })}
+                    className="w-full sm:w-52"
+                />
+                <TextField
+                    label={t('deviceDetail.history.filter.to')}
+                    type="datetime-local"
+                    value={range.to}
+                    min={range.from || undefined}
+                    error={isInverted ? t('deviceDetail.history.filter.inverted') : undefined}
+                    onChange={(event) => editRange({ to: event.target.value })}
+                    className="w-full sm:w-52"
+                />
+                {isFiltered ? (
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                            setRange(EMPTY_RANGE);
+                            setOffset(0);
+                        }}
+                    >
+                        {t('deviceDetail.history.filter.clear')}
+                    </Button>
+                ) : null}
+            </div>
+
+            {/* note: the inverted-range branch comes first because the query is disabled in that
+                state, and a disabled query reports isPending forever — checking isPending first
+                would leave the panel showing skeleton rows for a load that is never going to
+                happen. */}
+            {isInverted ? (
+                <EmptyState
+                    title={t('deviceDetail.history.filter.invalid.title')}
+                    body={t('deviceDetail.history.filter.invalid.body')}
+                />
+            ) : query.isPending ? (
                 <SkeletonRows rows={6} columns={['w-32', 'w-16', 'w-20', 'w-14', 'w-28']} />
             ) : query.error ? (
                 <ErrorState error={query.error} onRetry={() => void query.refetch()} />
             ) : total === 0 ? (
+                // note: an empty page means two different things and the message has to say which.
+                // "This device has never reported" is a fact about the device; "nothing in this
+                // window" is a fact about the filter the user just typed, and telling them the
+                // former while a range is active reads as though the filter broke something.
                 <EmptyState
-                    title={t('deviceDetail.history.empty.title')}
-                    body={t('deviceDetail.history.empty.body')}
+                    title={t(
+                        isFiltered
+                            ? 'deviceDetail.history.filter.noMatches.title'
+                            : 'deviceDetail.history.empty.title',
+                    )}
+                    body={t(
+                        isFiltered
+                            ? 'deviceDetail.history.filter.noMatches.body'
+                            : 'deviceDetail.history.empty.body',
+                    )}
                 />
             ) : (
                 <>

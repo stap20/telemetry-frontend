@@ -99,9 +99,34 @@ A few decisions are worth calling out because they shaped the rest of the code:
 - **Fleet** — every registered device with its latest status, polling roughly every 5s.
   Client-side search appears once the fleet grows past a handful of devices.
 - **Device detail** — the latest state (with a badge showing whether the backend served it
-  from cache or the database) plus paginated recent history.
+  from cache or the database) plus recent history, paginated and filterable by date range.
 - **Alerts** — every threshold currently breached, as labelled figures (reading vs.
   threshold), polled live with a matching count in the top bar.
+
+### The history filter sends the dates the API actually documents
+
+`GET /devices/:id/history` takes `from`, `to`, `offset` and `limit`. The panel was paginated before
+it was filtered, which is a real distinction: pagination alone hands back the same readings 25 at a
+time no matter what window you meant. Both dates are now sent, and three details are what make the
+filter behave rather than merely exist.
+
+- **The range is part of the react-query cache key**, not state beside it. A page of rows is only
+  meaningful together with the window that produced it; leaving the dates out of the key serves rows
+  from one range while the inputs claim another. They are kept as ISO **strings** for the same
+  reason — a `Date` is compared by identity in a key, so two identical ranges would look different
+  and refetch on every render.
+- **Changing a bound resets to page one.** Staying on page 4 of a result set that just shrank to one
+  page is how a working filter appears to return nothing at all.
+- **The bounds are read as local wall-clock time.** `datetime-local` yields a zoneless string, so it
+  is parsed in the browser's zone and serialised to UTC at the edge. Appending a `Z` is the tempting
+  one-liner and quietly shifts the window by the user's offset — "since 9am" would mean 9am UTC to
+  someone reading this in Cairo.
+
+An inverted range is caught before the request is sent: the endpoint does reject it (`400`), but
+spending a round trip to be told something already known is not worth it, so the query is disabled
+and the panel explains itself instead. An empty window is *not* treated as an error — "nothing
+happened in this range" and "this device has never reported" are different facts and get different
+copy, since showing the latter while a filter is active reads as though the filter broke something.
 
 ### "Registered but never reported" is a first-class state, not an error
 
