@@ -1,0 +1,21 @@
+{
+    // note: the Vite config runs in Node, not in the browser, so it is compiled as its own project.
+    // Merging it into the app project would put `process` and the Node module types into scope for
+    // every component — and browser code that can see `process` eventually uses it.
+    "compilerOptions": {
+        "target": "ES2023",
+        "lib": ["ES2023"],
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "skipLibCheck": true,
+        "isolatedModules": true,
+        "moduleDetection": "force",
+        "noEmit": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "types": ["node"],
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
+    },
+    "include": ["vite.config.ts"]
+}

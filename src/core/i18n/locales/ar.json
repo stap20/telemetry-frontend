@@ -1,0 +1,173 @@
+{
+    "app": {
+        "name": "Cypod للقياس عن بُعد",
+        "tagline": "لوحة مراقبة الأجهزة"
+    },
+    "nav": {
+        "fleet": "الأجهزة",
+        "alerts": "التنبيهات",
+        "signOut": "تسجيل الخروج",
+        "account": "الحساب"
+    },
+    "language": {
+        "label": "اللغة",
+        "change": "تغيير اللغة"
+    },
+    "common": {
+        "retry": "إعادة المحاولة",
+        "cancel": "إلغاء",
+        "loading": "جارٍ التحميل…",
+        "live": "مباشر",
+        "paused": "متوقف",
+        "notAvailable": "—",
+        "back": "رجوع",
+        "dismiss": "إغلاق",
+        "updated": "آخر تحديث {{when}}",
+        "showingRange": "{{range}} من {{total}}",
+        "previous": "السابق",
+        "next": "التالي"
+    },
+    "auth": {
+        "signIn": {
+            "title": "تسجيل الدخول",
+            "subtitle": "تابع أجهزتك لحظة بلحظة.",
+            "submit": "تسجيل الدخول",
+            "submitting": "جارٍ تسجيل الدخول…",
+            "noAccount": "ليس لديك حساب؟",
+            "createOne": "أنشئ حساباً"
+        },
+        "register": {
+            "title": "إنشاء حساب",
+            "subtitle": "سجّل لتبدأ مراقبة أجهزتك.",
+            "submit": "إنشاء الحساب",
+            "submitting": "جارٍ إنشاء الحساب…",
+            "haveAccount": "لديك حساب بالفعل؟",
+            "signIn": "تسجيل الدخول"
+        },
+        "fields": {
+            "email": "البريد الإلكتروني",
+            "password": "كلمة المرور",
+            "firstName": "الاسم الأول",
+            "lastName": "اسم العائلة"
+        },
+        "validation": {
+            "emailRequired": "أدخل بريدك الإلكتروني.",
+            "emailInvalid": "أدخل بريداً إلكترونياً صالحاً.",
+            "passwordRequired": "أدخل كلمة المرور.",
+            "passwordTooShort": "يجب ألا تقل كلمة المرور عن {{count}} أحرف.",
+            "firstNameRequired": "أدخل الاسم الأول.",
+            "lastNameRequired": "أدخل اسم العائلة."
+        },
+        "sessionExpired": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى."
+    },
+    "devices": {
+        "title": "الأجهزة",
+        "subtitle_zero": "لا توجد أجهزة مسجّلة",
+        "subtitle_one": "جهاز واحد مسجّل",
+        "subtitle_two": "جهازان مسجّلان",
+        "subtitle_few": "{{count}} أجهزة مسجّلة",
+        "subtitle_many": "{{count}} جهازاً مسجّلاً",
+        "subtitle_other": "{{count}} جهاز مسجّل",
+        "pollingNote": "تُحدَّث الحالة كل {{seconds}} ثوانٍ",
+        "search": "ابحث عن جهاز",
+        "searchEmpty": "لا يوجد جهاز يطابق «{{term}}».",
+        "empty": {
+            "title": "لا توجد أجهزة بعد",
+            "body": "سجّل جهازك الأول لتبدأ باستقبال القياسات.",
+            "action": "تسجيل جهاز"
+        },
+        "register": {
+            "action": "تسجيل جهاز",
+            "title": "تسجيل جهاز",
+            "subtitle": "يجب أن يطابق المعرّف ما يرسله الجهاز نفسه.",
+            "id": "معرّف الجهاز",
+            "idHint": "مثال: sensor-A1B2C3",
+            "name": "الاسم الظاهر",
+            "nameHint": "مثال: ثلاجة المستودع",
+            "submit": "تسجيل",
+            "submitting": "جارٍ التسجيل…",
+            "idRequired": "أدخل معرّف الجهاز.",
+            "nameRequired": "أدخل الاسم الظاهر."
+        },
+        "columns": {
+            "device": "الجهاز",
+            "status": "الحالة",
+            "battery": "البطارية",
+            "temperature": "الحرارة",
+            "position": "الموقع",
+            "lastReading": "آخر قراءة"
+        },
+        "neverReported": "لم يُرسل بعد",
+        "neverReportedHint": "مسجّل، لكن لم تصل منه أي قياسات بعد.",
+        "viewDetail": "عرض الجهاز"
+    },
+    "deviceDetail": {
+        "backToFleet": "العودة إلى الأجهزة",
+        "latest": {
+            "title": "آخر حالة",
+            "recordedAt": "سُجّلت {{when}}",
+            "cacheHit": "من الذاكرة المؤقتة",
+            "cacheMiss": "من قاعدة البيانات",
+            "cacheExplainer": "يوضّح الخادم ما إذا كانت الاستجابة من Redis أم من Postgres."
+        },
+        "history": {
+            "title": "السجل الأخير",
+            "subtitle": "القياسات التي أرسلها هذا الجهاز، الأحدث أولاً.",
+            "empty": {
+                "title": "لا توجد قياسات بعد",
+                "body": "ستظهر هنا القياسات التي يسجّلها هذا الجهاز."
+            }
+        },
+        "notFound": {
+            "title": "الجهاز غير موجود",
+            "body": "هذا الجهاز غير مسجّل في حسابك."
+        }
+    },
+    "alerts": {
+        "title": "التنبيهات",
+        "subtitle": "الحدود التي تم تجاوزها حالياً في أجهزتك.",
+        "count_zero": "لا توجد تنبيهات نشطة",
+        "count_one": "تنبيه نشط واحد",
+        "count_two": "تنبيهان نشطان",
+        "count_few": "{{count}} تنبيهات نشطة",
+        "count_many": "{{count}} تنبيهاً نشطاً",
+        "count_other": "{{count}} تنبيه نشط",
+        "empty": {
+            "title": "لا شيء يتطلب انتباهك",
+            "body": "لا يوجد جهاز يتجاوز أي حد حالياً."
+        },
+        "type": {
+            "LOW_BATTERY": "بطارية منخفضة",
+            "HIGH_TEMPERATURE": "حرارة مرتفعة",
+            "unknown": "تنبيه"
+        },
+        "reading": "القراءة",
+        "threshold": "الحد",
+        "triggered": "تم التنبيه {{when}}",
+        "openDevice": "فتح الجهاز"
+    },
+    "status": {
+        "OK": "سليم",
+        "FAULT": "عطل",
+        "UNKNOWN": "غير معروف",
+        "NEVER_REPORTED": "لا توجد بيانات"
+    },
+    "units": {
+        "percent": "{{value}}٪",
+        "celsius": "{{value}}°م",
+        "coordinates": "{{lat}}، {{lng}}",
+        "noFix": "لا توجد إشارة GPS"
+    },
+    "errors": {
+        "title": "حدث خطأ ما",
+        "network": "تعذّر الوصول إلى الخادم. تأكد من تشغيل الواجهة البرمجية.",
+        "unauthorized": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
+        "forbidden": "ليس لديك صلاحية الوصول إلى هذا.",
+        "notFound": "لم يتم العثور على ذلك.",
+        "conflict": "هذا موجود بالفعل.",
+        "validation": "يرجى مراجعة القيم التي أدخلتها.",
+        "rateLimited": "عدد القراءات كبير جداً لهذا الجهاز. حاول بعد قليل.",
+        "server": "واجه الخادم مشكلة. يرجى المحاولة مرة أخرى.",
+        "unknown": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    }
+}
