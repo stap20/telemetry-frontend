@@ -7,6 +7,11 @@
 export interface PageParams {
     offset: number;
     limit: number;
+    // note: filters belong IN the key, not beside it. A page of results is only meaningful together
+    // with the range that produced it, so leaving these out would let react-query serve rows from
+    // one time window while the controls claim another.
+    from?: string;
+    to?: string;
 }
 
 // note: cache keys live in one place because invalidation depends on them agreeing. A key written

@@ -36,12 +36,22 @@ export function useLatestState(deviceId: string) {
     });
 }
 
-export function useDeviceHistory(deviceId: string, page: HistoryPageRequest) {
+// note: `enabled` is exposed because the caller can know the request is invalid before it is sent —
+// a range whose end precedes its start. The endpoint does reject it (400), but firing a request we
+// already know is malformed only to render its error is a round trip spent to learn nothing.
+export function useDeviceHistory(
+    deviceId: string,
+    page: HistoryPageRequest,
+    options: { enabled?: boolean } = {},
+) {
     return useQuery({
         queryKey: queryKeys.devices.history(deviceId, page),
         queryFn: () => deviceRepository.history(deviceId, page),
+        enabled: options.enabled ?? true,
         // note: keeps the previous page on screen while the next one loads, so paging does not
         // collapse the table to a skeleton and shift the layout under the cursor between clicks.
+        // It covers the date filter too — narrowing a range redraws the rows in place rather than
+        // flashing the whole panel back to a skeleton on every keystroke in the date input.
         placeholderData: keepPreviousData,
     });
 }

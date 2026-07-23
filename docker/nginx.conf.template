@@ -1,0 +1,56 @@
+# cypod-telemetry
+# Frontend/docker/nginx.conf.template
+#
+# note: a .template, not a .conf. The nginx image runs envsubst over everything in
+# /etc/nginx/templates at start-up, which is what lets API_UPSTREAM be pointed somewhere else
+# without rebuilding the image. Only the variables listed in ENVSUBST_VARS are substituted, so
+# nginx's own $host / $remote_addr survive untouched.
+
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # note: THE reason this proxy exists, and it is not about CORS. The session credential is the
+    # backend's httpOnly cookie, set `secure; sameSite=strict` — a strict cookie is withheld from
+    # cross-site requests, so the app and the API have to look like one origin to the browser. In
+    # development the Vite dev server proxies /api for exactly this reason; this is that same
+    # arrangement for the built app, which is why there is no absolute API URL anywhere in the
+    # frontend's configuration.
+    location /api/ {
+        proxy_pass ${API_UPSTREAM};
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # note: cookies are passed straight through. Rewriting the Set-Cookie domain here would
+        # break the same-origin property the proxy exists to create.
+        proxy_pass_request_headers on;
+    }
+
+    # note: hashed asset filenames are content-addressed — a change produces a new name — so they
+    # can be cached indefinitely and never revalidated.
+    location /assets/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # note: index.html must NOT be cached. It is the only file whose name is stable, so a cached
+    # copy keeps pointing at the previous build's asset hashes and the app silently stays on the
+    # old version after a deploy.
+    location = /index.html {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+
+    # note: the router is code-defined and client-side, so a deep link like /devices/DEV-1001 has no
+    # file behind it. Everything unmatched falls back to index.html and the app resolves the route —
+    # without this, refreshing any page other than / returns nginx's own 404.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

@@ -7,7 +7,17 @@ export interface TelemetryReading extends Measurements {
     deviceId: string;
 }
 
-export interface HistoryPageRequest {
+// note: `from`/`to` are ISO instants, not Date objects, because this value is also a react-query
+// cache key. A Date is compared by identity there, so two structurally identical ranges would look
+// like different keys and refetch on every render; a string compares by value and is what goes on
+// the wire anyway. Both are optional — an absent bound means "unbounded on that side", which is how
+// the endpoint reads a missing parameter.
+export interface HistoryRange {
+    from?: string;
+    to?: string;
+}
+
+export interface HistoryPageRequest extends HistoryRange {
     offset: number;
     limit: number;
 }

@@ -54,7 +54,17 @@ export const deviceRepository = {
     ): Promise<Page<TelemetryReading>> {
         const { data } = await httpClient.get<DeviceHistoryDto>(
             endpoints.devices.history(deviceId),
-            { query: { offset: page.offset, limit: page.limit } },
+            {
+                // note: `from`/`to` are passed straight through as undefined when unset — the http
+                // client drops undefined values, so an unfiltered request sends neither parameter
+                // rather than `from=undefined`, which the endpoint would reject as a bad date.
+                query: {
+                    offset: page.offset,
+                    limit: page.limit,
+                    from: page.from,
+                    to: page.to,
+                },
+            },
         );
         return deviceMapper.toHistoryPage(data);
     },

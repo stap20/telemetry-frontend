@@ -112,6 +112,20 @@
             "empty": {
                 "title": "No readings yet",
                 "body": "Telemetry recorded by this device will appear here."
+            },
+            "filter": {
+                "from": "From",
+                "to": "To",
+                "clear": "Clear",
+                "inverted": "Must be after the start of the range.",
+                "invalid": {
+                    "title": "That range runs backwards",
+                    "body": "The end of the range is earlier than its start. Adjust either date to see readings."
+                },
+                "noMatches": {
+                    "title": "No readings in this range",
+                    "body": "This device reported nothing between the dates you selected."
+                }
             }
         },
         "notFound": {
