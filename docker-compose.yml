@@ -1,0 +1,47 @@
+# cypod-telemetry
+# Frontend/docker-compose.yml
+#
+# Builds the console and serves it on http://localhost:8080.
+#
+#   docker compose up --build
+#
+# note: the BACKEND'S compose must be up first. It owns the `cypod-net` network this file joins as
+# an external one, which is how nginx reaches the API as `http://api:3000`. Two separate compose
+# files rather than one at the repo root is deliberate: these are two independently deployable
+# projects, each in its own repository, and a shared root file would tie their release cycles
+# together for the convenience of a single `up`.
+#
+# To run against a backend that is NOT in compose (one started with `npm run start:dev` on the
+# host), point the proxy at the host and drop the external network:
+#
+#   API_UPSTREAM=http://host.docker.internal:3000 docker compose up --build
+
+services:
+    web:
+        build:
+            context: .
+            target: runtime
+            args:
+                VITE_TELEMETRY_POLL_INTERVAL_MS: ${VITE_TELEMETRY_POLL_INTERVAL_MS:-5000}
+        environment:
+            # note: substituted into the nginx config at container start, not at build time — the
+            # image is the same artifact whichever backend it is pointed at, which is the whole
+            # reason the config is a template.
+            API_UPSTREAM: ${API_UPSTREAM:-http://api:3000}
+        ports:
+            - '${WEB_PORT:-8080}:80'
+        healthcheck:
+            test: ['CMD', 'wget', '--spider', '-q', 'http://localhost/']
+            interval: 10s
+            timeout: 3s
+            retries: 5
+        restart: unless-stopped
+        networks: [cypod]
+
+networks:
+    cypod:
+        # note: external because the backend's compose creates and owns it. Declaring it here too
+        # would give each project its own isolated network with the same name and they would not
+        # see each other.
+        name: cypod-net
+        external: true

@@ -15,6 +15,34 @@ Arabic, and flips to a right-to-left layout when Arabic is selected.
 
 ## Getting started
 
+### With Docker
+
+```bash
+docker compose up --build     # http://localhost:8080
+```
+
+The image is a two-stage build: Vite produces the static bundle, and **nginx** serves it — there is
+no Node process in the runtime image, because shipping an entire runtime to serve a folder of assets
+buys nothing.
+
+nginx also proxies `/api` to the backend, and that is the *point* rather than a convenience: it is
+the production counterpart of the dev-server proxy, and it exists for the same cookie reason
+described below. Two details follow from how Vite works:
+
+- **`VITE_*` values are build arguments, not runtime environment variables.** Vite inlines them into
+  the bundle, so `VITE_TELEMETRY_POLL_INTERVAL_MS` is a `--build-arg`; changing it means rebuilding.
+- **The API upstream is a *runtime* variable.** `API_UPSTREAM` is substituted into the nginx config
+  when the container starts, so the same image can be pointed at any backend without a rebuild.
+
+The compose file joins `cypod-net`, the network the **backend's** compose creates, so bring that up
+first and nginx reaches the API as `http://api:3000`. To run against a backend on the host instead:
+
+```bash
+API_UPSTREAM=http://host.docker.internal:3000 docker compose up --build
+```
+
+### Locally
+
 Prerequisites: Node 20+ and the backend API running (default `http://localhost:3000`).
 
 ```bash

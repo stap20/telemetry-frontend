@@ -1,0 +1,17 @@
+# cypod-telemetry
+node_modules
+dist
+
+# note: excluded so a developer's local overrides can never end up inside the image. Vite inlines
+# VITE_* values at build time, which makes a stray .env.local a build input rather than a runtime
+# one — it would be baked into the bundle instead of merely being present.
+.env
+.env.*
+!.env.example
+
+.git
+.gitignore
+*.md
+.vscode
+.idea
+npm-debug.log*
