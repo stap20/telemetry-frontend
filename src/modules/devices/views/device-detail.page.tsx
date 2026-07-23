@@ -11,6 +11,7 @@ import { PageHeader } from '@/ui/page-header';
 import { EmptyState, ErrorState, Skeleton } from '@/ui/states';
 import { useDevices, useLatestState } from '../services/use-device';
 import { BatteryValue, PositionValue, StatusBadge, TemperatureValue } from './components/measurements';
+import { HistoryPanel } from './components/history-panel';
 
 export function DeviceDetailPage({ deviceId }: { deviceId: string }) {
     const { t } = useTranslation();
@@ -71,6 +72,12 @@ export function DeviceDetailPage({ deviceId }: { deviceId: string }) {
             />
 
             <LatestStatePanel query={latestQuery} />
+
+            {/* note: keyed by device id so navigating between two devices resets the pagination.
+                Without the key React reuses the component instance and its `offset` state, and
+                opening a device that has 30 readings from one showing page 4 would land on an
+                empty page for no visible reason. */}
+            <HistoryPanel key={device.id} deviceId={device.id} />
         </>
     );
 }
